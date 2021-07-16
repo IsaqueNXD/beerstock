@@ -37,6 +37,7 @@ public class BeerController {
         return beerService.findByName(name);
     }
 
+    @GetMapping
     public List<BeerDTO> listBeers() {
         return beerService.listAll();
     }
