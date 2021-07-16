@@ -14,7 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,21 +34,22 @@ public class BeerServiceTest {
 
     @Test
     void whenBeerInformedThenItShouldBeCreated() throws BeerAlreadyRegisteredException {
-        BeerDTO beerDTO = BeerDTOBuilder
+        BeerDTO expectedBeerDTO = BeerDTOBuilder
                 .builder()
                 .build()
                 .toBeerDTO();
 
-        Beer expectedSavedBeer = beerMapper.toModel(beerDTO);
+        Beer expectedSavedBeer = beerMapper.toModel(expectedBeerDTO);
 
-        when(beerRepository.findByName(beerDTO.getName()))
+        when(beerRepository.findByName(expectedBeerDTO.getName()))
                 .thenReturn(Optional.empty());
         when(beerRepository.save(expectedSavedBeer))
                 .thenReturn(expectedSavedBeer);
 
-        BeerDTO createdBeerDTO = beerService.createBeer(beerDTO);
+        BeerDTO createdBeerDTO = beerService.createBeer(expectedBeerDTO);
 
-        assertEquals(beerDTO.getId(), createdBeerDTO.getId());
-        assertEquals(beerDTO.getName(), createdBeerDTO.getName());
+        assertThat(createdBeerDTO.getId(), is(equalTo(expectedBeerDTO.getId())));
+        assertThat(createdBeerDTO.getName(), is(equalTo(expectedBeerDTO.getName())));
+        assertThat(createdBeerDTO.getQuantity(), is(equalTo(expectedBeerDTO.getQuantity())));
     }
 }
